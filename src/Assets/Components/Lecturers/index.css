@@ -94,34 +94,22 @@ main{
     right: 20%;
 }
 
-#inLecturerID,#inName,#inLecturerType{
-  width: fit-content;
-  height: 2rem;
+
+
+#lecturerName,#lecturerID,#lecturerType{
   font-size: medium;
-  z-index: 4;
-  background: linear-gradient(
-        to right bottom,
-        rgba(255, 255, 255, 0.9),
-        rgba(255, 255, 255, 0.3)
-      );
-    border-width: 0;
-    border-radius: 2rem;
-    position: absolute;
-    top: 17%;
-  }
+  position: absolute;
+  right: 20%;
+}
 
-  #inLecturerID{
-    right: 35%;
-  }
-   #inName{
-    right: 60%;
-  }
-   #inLecturerType{
-    right: 35%;
-    top: 25%;
-  }
+#lecturerName{
+top: 22%;
+}
 
+#lecturerID{
+  top: 27%;
+}
 
-.data{
-  z-index: 5;
+#lecturerType{
+  top: 32%;
 }

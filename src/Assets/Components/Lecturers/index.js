@@ -27,17 +27,27 @@ for(let i = 0; i< lecturers.lecturers.length - 1; i = i + 3){
     lecturersObjArray.push(new Lecturer(name , id , type));
 }
 
-
+function findLecturerByName(name){
+    for(let i = 0; i < lecturersObjArray.length; i++){
+        if(lecturersObjArray[i].lecturerName === name){
+            return lecturersObjArray[i];
+        }
+    }
+}
             
 const Lecturers = () => {
-    const [lecturerS, setLecturerS] = useState("")
     const [lecturerName , setLecturerName] = useState("")
     const [lecturerID ,setLecturerID] = useState("")
-    const [selectedOption , setSelectedOption] = useState(options[0].value)
+    const [lecturerType , setLecturerType] = useState("")
 
-    let handleLecturerChange = (e) => {
-        setLecturerS();
-      }  
+    
+
+    let handleSelected = (e) => {
+        setLecturerName(e.target.value);
+        let lecturer = findLecturerByName(e.target.value);
+        setLecturerID(lecturer.lecturerID);
+        setLecturerType(lecturer.lecturerType)
+    }
 
     return(
         <>
@@ -48,12 +58,17 @@ const Lecturers = () => {
                 <button id='btnAdd' onClick={postAddLecturer} className='buttons'>הוסף</button>
                 <button id='btnDel' onClick={postDeleteLecturer} className='buttons'>מחק</button>
                 <button id='btnUpdate' onClick={postUpdateLecturer} className='buttons'>עדכן</button>
-                <select className='lecturerSelector' onChange={e =>setSelectedOption(e.target.value)} id='Select'> 
-                <option> בחר מרצה </option>
-                {lecturersObjArray.map((lecturer) => <option id='option' value={lecturer.LecturerName}> {lecturer.lecturerName}  </option>)}
-                 </select> 
-                 <p>שם: {lecturerName} </p>
-                 <p>מזהה: {lecturerID}</p>
+
+
+                 <select className='lecturerSelector' onChange={handleSelected}>
+                    <option>בחר מרצה</option>
+                    {lecturersObjArray.map((lecturer) => <option>{lecturer.lecturerName}</option> )}
+                 </select>
+
+                 <p id='lecturerName'> שם מרצה: {lecturerName}</p>
+                 <p id='lecturerID'>מזהה מרצה: {lecturerID}</p>
+                 <p id='lecturerType'>סוג מרצה: {lecturerType}</p>
+                
 
                  
             </section>
