@@ -43,3 +43,9 @@ main{
     bottom: 5%;
     left: 10%;
   }
+
+  #calendar{
+    position: absolute;
+    top: 17% !important;
+    height: fit-content;
+  }

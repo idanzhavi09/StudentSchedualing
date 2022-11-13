@@ -1,6 +1,8 @@
 import onoacademic from '../../images/onoacademic.png';
 import React  from 'react';
 import { useState } from 'react';
+
+
 require('./index.css');
 const axios = require('axios').default;
 var lecturerID = '2';
@@ -36,6 +38,7 @@ function findLecturerByName(name){
 }
             
 const Lecturers = () => {
+    const [value, onChange] = useState(new Date());
     const [lecturerName , setLecturerName] = useState("")
     const [lecturerID ,setLecturerID] = useState("")
     const [lecturerType , setLecturerType] = useState("")
@@ -68,9 +71,8 @@ const Lecturers = () => {
                  <p id='lecturerName'> שם מרצה: {lecturerName}</p>
                  <p id='lecturerID'>מזהה מרצה: {lecturerID}</p>
                  <p id='lecturerType'>סוג מרצה: {lecturerType}</p>
-                
+            
 
-                 
             </section>
             <p></p>
         </main>
