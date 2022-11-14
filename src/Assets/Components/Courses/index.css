@@ -45,7 +45,18 @@ main{
   }
 
   #calendar{
+    height: fit-content;
+  }
+
+  .react-calendar{
     position: absolute;
     top: 17% !important;
     height: fit-content;
+  
+  }
+
+  .lessons{
+    position: absolute;
+    top: 17% !important;
+    right: 10%;
   }
