@@ -6,6 +6,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import "intersection-observer";
 import { ScrollView } from "@cantonjs/react-scroll-view";
+const axios = require('axios').default;
+
 
 require('./index.css');
 
@@ -16,6 +18,7 @@ const Courses = () => {
     function onChange(nextValue){
         setValue(nextValue);
         console.log(nextValue);
+        axios.post('/getCourses' , value);
     }
 
     return(
