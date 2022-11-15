@@ -1,11 +1,16 @@
 import onoacademic from '../../images/onoacademic.png';
 import React  from 'react';
 import { useState } from 'react';
+import Modal from "react-modal";
+
 
 
 require('./index.css');
 const axios = require('axios').default;
-var lecturerID = '2';
+var lecturerSelected;
+
+
+Modal.setAppElement("#root");
 
 class Lecturer{
     constructor(lecturerName , lecturerID , lecturerType){
@@ -42,14 +47,19 @@ const Lecturers = () => {
     const [lecturerName , setLecturerName] = useState("")
     const [lecturerID ,setLecturerID] = useState("")
     const [lecturerType , setLecturerType] = useState("")
+    const [isOpen, setIsOpen] = useState(false);
 
-    
+    function toggleModal() {
+        setIsOpen(!isOpen);
+      }
 
     let handleSelected = (e) => {
         setLecturerName(e.target.value);
         let lecturer = findLecturerByName(e.target.value);
         setLecturerID(lecturer.lecturerID);
         setLecturerType(lecturer.lecturerType)
+        lecturerSelected = lecturer.lecturerID.toString();
+        
     }
 
     return(
@@ -58,11 +68,14 @@ const Lecturers = () => {
             <img id='onoLogo' src={onoacademic} alt="ono" />
             <section className='glass'>
                 <h1 className='title'>מסך מרצים</h1>
-                <button id='btnAdd' onClick={postAddLecturer} className='buttons'>הוסף</button>
                 <button id='btnDel' onClick={postDeleteLecturer} className='buttons'>מחק</button>
                 <button id='btnUpdate' onClick={postUpdateLecturer} className='buttons'>עדכן</button>
+                <button id='btnAdd' onClick={toggleModal} className='buttons'>הוסף</button>
+                <Modal isOpen={isOpen} onRequestClose={toggleModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
+                <input placeholder='שם מרצה:' type='name'></input>
+                <input placeholder='מזהה מרצה' type={'number'}></input>
 
-
+                </Modal>
                  <select className='lecturerSelector' onChange={handleSelected}>
                     <option>בחר מרצה</option>
                     {lecturersObjArray.map((lecturer) => <option>{lecturer.lecturerName}</option> )}
@@ -89,7 +102,7 @@ const postDeleteLecturer = () => {
         method:'post',
         url:'/delLecturer',
         data:{
-            lecturerID:lecturerID,
+            lecturerID:lecturerSelected,
         }
     }).then(()=> console.log('LECTURER DELETED'))
     .catch((err)=> console.log('ERROR:' + err))
@@ -101,7 +114,7 @@ const postAddLecturer = () => {
         method:'post',
         url:'/addLecturer',
         data:{
-            lecturerID:lecturerID,
+            lecturerID:'2',
             lecturerName:'Lior',
             lecturerType:'Lecturer'
         }

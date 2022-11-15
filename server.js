@@ -68,6 +68,12 @@ connection.on("connect", err => {
         addLecturer(id , name , type);
 
     })
+    app.post('/getLessons' , (req , res) => {
+        console.log('RECIVED REQUEST TO GET LESSONS BY DATE');
+        console.log(req.body);
+        res.send('Data recieved')
+    })
+    
 
   }
 });

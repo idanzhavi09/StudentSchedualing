@@ -18,7 +18,14 @@ const Courses = () => {
     function onChange(nextValue){
         setValue(nextValue);
         console.log(nextValue);
-        axios.post('/getCourses' , value);
+        axios({
+            method:'post',
+            url:'/getLessons',
+            data:{
+                dateRequested:nextValue.toLocaleDateString(),
+            }
+        }).then(()=> console.log('LESSONS RETRIEVED'))
+        .catch((err)=> console.log('ERROR:' + err))
     }
 
     return(
@@ -27,7 +34,7 @@ const Courses = () => {
                 <img id='onoLogo' src={onoacademic} alt="ono" />
                 <section className='glass'>
                     <h1 className='title'>מסך קורסים</h1>
-                    <Calendar id='calendar' onChange={onChange} value={value}/>
+                    <Calendar id='calendar' onChange={onChange} onClickDay={()=> {console.log(value)}} value={value}/>
                     <div className='lessons'>
                     <ScrollView style={{ height: '100vh' }}>
                     <Lesson />
