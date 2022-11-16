@@ -3,12 +3,9 @@ import React  from 'react';
 import { useState } from 'react';
 import Modal from "react-modal";
 
-
-
 require('./index.css');
 const axios = require('axios').default;
 var lecturerSelected;
-
 
 Modal.setAppElement("#root");
 
@@ -72,9 +69,8 @@ const Lecturers = () => {
                 <button id='btnUpdate' onClick={postUpdateLecturer} className='buttons'>עדכן</button>
                 <button id='btnAdd' onClick={toggleModal} className='buttons'>הוסף</button>
                 <Modal isOpen={isOpen} onRequestClose={toggleModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
-                <input placeholder='שם מרצה:' type='name'></input>
-                <input placeholder='מזהה מרצה' type={'number'}></input>
-
+                <input placeholder='שם מרצה:' type={'text'}></input>
+                <input placeholder='חוג מרצה:' type={'text'}></input>
                 </Modal>
                  <select className='lecturerSelector' onChange={handleSelected}>
                     <option>בחר מרצה</option>
@@ -126,8 +122,5 @@ const postUpdateLecturer = () => {
     // lecturerID: lecturerID,
     // }) 
 }
-
-
-
 
 export default Lecturers;
