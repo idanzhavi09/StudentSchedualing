@@ -2,6 +2,7 @@ import onoacademic from '../../images/onoacademic.png';
 import React  from 'react';
 import { useState } from 'react';
 import Modal from "react-modal";
+import Dialog from '../AddLecturerDialog';
 
 require('./index.css');
 const axios = require('axios').default;
@@ -68,10 +69,11 @@ const Lecturers = () => {
                 <button id='btnDel' onClick={postDeleteLecturer} className='buttons'>מחק</button>
                 <button id='btnUpdate' onClick={postUpdateLecturer} className='buttons'>עדכן</button>
                 <button id='btnAdd' onClick={toggleModal} className='buttons'>הוסף</button>
+
                 <Modal isOpen={isOpen} onRequestClose={toggleModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
-                <input placeholder='שם מרצה:' type={'text'}></input>
-                <input placeholder='חוג מרצה:' type={'text'}></input>
+                    <Dialog />
                 </Modal>
+
                  <select className='lecturerSelector' onChange={handleSelected}>
                     <option>בחר מרצה</option>
                     {lecturersObjArray.map((lecturer) => <option>{lecturer.lecturerName}</option> )}

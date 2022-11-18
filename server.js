@@ -60,12 +60,12 @@ connection.on("connect", err => {
     })
     app.post('/addLecturer' , (req, res) => {
         console.log('RECIEVED REQUEST TO ADD LECTURER');
-        let id = req.body.lecturerID;
         let name = req.body.lecturerName;
         let type= req.body.lecturerType;
-        console.log(type + " " + name + " " + id);
+        let teachableCourses = req.body.lecturerTeachableClasses
+        console.log(type + " " + name + " " + teachableCourses);
         console.log('STARTED ADDING LECTURER...');
-        addLecturer(id , name , type);
+        addLecturer(name , type , teachableCourses);
 
     })
     app.post('/getLessons' , (req , res) => {
@@ -99,9 +99,7 @@ connection.connect();
                         }
         });
         fs.writeFileSync('./src/lecturers.js' ,'var lecturers = ' + "[" +  result + "]"  + '\n' + 'module.exports = {lecturers,}');
-
         return result;
-
     });
 
     request.on('done', function(rowCount, more) {  
@@ -109,7 +107,6 @@ connection.connect();
         console.log(rowCount + ' rows returned');  
         });  
         
-    // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
         });
     connection.execSql(request);  
@@ -130,16 +127,16 @@ function delLecturer(LecturerID){
 
             request.on("requestCompleted", function (rowCount, more) {
                 console.log('REQUEST COMPLETED');
-                });
-               
+                });               
         }
     });
     connection.execSql(request);  
 }
 
-function addLecturer(lecturerID , lecturerName , lecturerType){
+function addLecturer( lecturerName , lecturerType , teachableCourses){
     console.log('ADDING LECTURER...');
-    let request = new Request('INSERT INTO [dbo].[Lecturer] VALUES(' + lecturerID + ',' + lecturerName + ',' + lecturerType + ')' , function(err){
+    console.log('Name:' + lecturerName + ' , ' + 'Type:' + lecturerType + ' , ' + 'Courses:' + teachableCourses);
+    let request = new Request('INSERT INTO [dbo].[Lecturer] (LecturerName,LecturerType,TeachableCourses) VALUES(' + "'" + lecturerName + "'" + ',' + "'" + lecturerType + "'" + ',' + "'" +  teachableCourses + "'" +')' , function(err){
         if(err){
             console.log(err);
         }
@@ -153,19 +150,16 @@ function addLecturer(lecturerID , lecturerName , lecturerType){
         }
     });
     connection.execSql(request);  
-
 }
 
 app.use(express.static("build"));
-
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
   });
 
 
-
 app.listen(3000 , ()=> {
     console.log('listening on port 3000');
-})
+});
 
