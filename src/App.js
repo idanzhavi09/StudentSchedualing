@@ -5,6 +5,7 @@ import Home from './Assets/Components/Home';
 import Lecturers from './Assets/Components/Lecturers';
 import React  from 'react';
 import Courses from './Assets/Components/Courses';
+import Assignment from './Assets/Components/Assignment';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Route path='/Home' element={<Home/>} />
       <Route path='/Lecturers' element={<Lecturers />} />
       <Route path='/Courses' element={<Courses />} />
+      <Route path='/Assignment' element={<Assignment />} />
     </Routes>
     </>
   );

@@ -1,0 +1,61 @@
+main{
+    min-height: 100vh;
+    background: linear-gradient(to right top , #66c79a , #7ceca2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.glass {
+    position: relative;
+    background: white;
+    min-height: 80vh;
+    width: 60%;
+    background: linear-gradient(
+      to right bottom,
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.3)
+    );
+    border-radius: 2rem;
+    z-index: 2;
+    backdrop-filter: blur(2rem);
+    display: flex;
+  }
+  .circle1,
+  .circle2 {
+    background: white;
+    background: linear-gradient(
+      to right bottom,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.3)
+    );
+    height: 20rem;
+    width: 20rem;
+    position: absolute;
+    border-radius: 50%;
+  }
+  
+  .circle1 {
+    top: 5%;
+    right: 15%;
+  }
+  .circle2 {
+    bottom: 5%;
+    left: 10%;
+  }
+
+  .classes li {
+    display: flex;
+    align-items: center;
+    border: solid 2px #d0d0d0;
+    border-radius: .2em;
+    padding: .5em .8em .5em .5em;
+    margin-bottom: 1em;
+  }
+  
+  .classes p {
+    max-width: none;
+    font-weight: bold;
+    margin: 0;
+  }
+  

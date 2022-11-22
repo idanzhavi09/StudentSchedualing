@@ -73,6 +73,11 @@ connection.on("connect", err => {
         console.log(req.body);
         res.send('Data recieved')
     })
+
+    app.post('/getCourses' , (req,res) => {
+        console.log('RECIEVED REQUEST TO RETRIEVE COURSES');
+
+    })
     
 
   }
@@ -150,6 +155,27 @@ function addLecturer( lecturerName , lecturerType , teachableCourses){
         }
     });
     connection.execSql(request);  
+}
+
+function getCourses(){
+    console.log('RETRIEVING COURSES...');
+    let request = new Request('SELECT * [LecturerID],[LecturerName],[LecturerType] FROM [dbo].[Lecturer]' , function(err) {
+        if(err){
+            console.log(err);
+        }
+    });
+    var result = [];
+    request.on('row',function(columns){
+        columns.forEach(function(column){
+            if(column.value === null){
+                console.log('NULL');
+            }
+            else{
+                result.push(column.value);
+            }
+        });
+        return result;
+    });
 }
 
 app.use(express.static("build"));

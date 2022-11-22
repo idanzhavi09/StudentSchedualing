@@ -3,10 +3,9 @@ import React  from 'react';
 import { useState } from 'react';
 import Modal from "react-modal";
 import Dialog from '../AddLecturerDialog';
-
+var lecturerSelected;
 require('./index.css');
 const axios = require('axios').default;
-var lecturerSelected;
 
 Modal.setAppElement("#root");
 
@@ -100,7 +99,7 @@ const postDeleteLecturer = () => {
         method:'post',
         url:'/delLecturer',
         data:{
-            lecturerID:lecturerSelected,
+            lecturerID:'10',
         }
     }).then(()=> console.log('LECTURER DELETED'))
     .catch((err)=> console.log('ERROR:' + err))
@@ -112,7 +111,7 @@ const postAddLecturer = () => {
         method:'post',
         url:'/addLecturer',
         data:{
-            lecturerID:'2',
+            lecturerID:lecturerSelected,
             lecturerName:'Lior',
             lecturerType:'Lecturer'
         }
