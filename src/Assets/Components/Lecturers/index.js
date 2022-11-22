@@ -10,10 +10,11 @@ const axios = require('axios').default;
 Modal.setAppElement("#root");
 
 class Lecturer{
-    constructor(lecturerName , lecturerID , lecturerType){
+    constructor(lecturerName , lecturerID , lecturerType , teachableCourses){
         this.lecturerName = lecturerName;
         this.lecturerID = lecturerID;
         this.lecturerType = lecturerType;
+        this.teachableCourses = teachableCourses;
     }
 }
 
@@ -24,11 +25,12 @@ for(let i = 1; i < lecturers.lecturers.length; i = i +3){
 }
 
 var lecturersObjArray = [];
-for(let i = 0; i< lecturers.lecturers.length - 1; i = i + 3){
+for(let i = 0; i< lecturers.lecturers.length - 1; i = i + 4){
     let id = lecturers.lecturers[i];
     let name = lecturers.lecturers[i + 1];
     let type = lecturers.lecturers[i + 2];
-    lecturersObjArray.push(new Lecturer(name , id , type));
+    let teachableCourses = lecturers.lecturers[i + 3]
+    lecturersObjArray.push(new Lecturer(name , id , type , teachableCourses));
 }
 
 function findLecturerByName(name){
@@ -38,26 +40,52 @@ function findLecturerByName(name){
         }
     }
 }
+
+
             
 const Lecturers = () => {
     const [value, onChange] = useState(new Date());
     const [lecturerName , setLecturerName] = useState("")
     const [lecturerID ,setLecturerID] = useState("")
     const [lecturerType , setLecturerType] = useState("")
-    const [isOpen, setIsOpen] = useState(false);
+    const [teachableCourses , setTeachableCourses] = useState("")
+    const [updateName , setUpdateName] = useState("")
+    const [updateType , setUpdateType] = useState("")
+    const [updateTC , setUpdateTC] = useState("")
+    const [isAddOpen, setIsAddOpen] = useState(false);
+    const [isUpdateOpen , setUpdateOpen] = useState(false);
 
-    function toggleModal() {
-        setIsOpen(!isOpen);
+
+
+    function toggleAddModal() {
+        setIsAddOpen(!isAddOpen);
       }
+    
+    function toggleUpdateModal() {
+        setUpdateOpen(!isUpdateOpen);
+    }
 
     let handleSelected = (e) => {
         setLecturerName(e.target.value);
         let lecturer = findLecturerByName(e.target.value);
         setLecturerID(lecturer.lecturerID);
         setLecturerType(lecturer.lecturerType)
+        setTeachableCourses(lecturer.teachableCourses);
         lecturerSelected = lecturer.lecturerID.toString();
         
     }
+    function handleChangeName(e){
+        setUpdateName(e.target.value);
+    }
+
+    function handleChangeField(e){
+        setUpdateType(e.target.value)
+    }
+
+    function handleChangeCourses(e){
+        setUpdateTC(e.target.value);
+    }
+    
 
     return(
         <>
@@ -66,11 +94,18 @@ const Lecturers = () => {
             <section className='glass'>
                 <h1 className='title'>מסך מרצים</h1>
                 <button id='btnDel' onClick={postDeleteLecturer} className='buttons'>מחק</button>
-                <button id='btnUpdate' onClick={postUpdateLecturer} className='buttons'>עדכן</button>
-                <button id='btnAdd' onClick={toggleModal} className='buttons'>הוסף</button>
+                <button id='btnUpdate' onClick={toggleUpdateModal} className='buttons'>עדכן</button>
+                <button id='btnAdd' onClick={toggleAddModal} className='buttons'>הוסף</button>
 
-                <Modal isOpen={isOpen} onRequestClose={toggleModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
+                <Modal isOpen={isAddOpen} onRequestClose={toggleAddModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
                     <Dialog />
+                </Modal>
+
+                <Modal isOpen={isUpdateOpen} onRequestClose={toggleUpdateModal} contentLabel="Update Dialog" className="mymodal"overlayClassName="myoverlay">
+                    <input type={'text'} onChange={handleChangeName} placeholder='שם מרצה'></input>
+                    <input type={'text'} onChange={handleChangeField} placeholder='חוג מרצה'></input>
+                    <input type={'text'} onChange={handleChangeCourses} placeholder='קורסים'></input>
+                    <button onClick={handleUpdateClick} >עדכן!</button>
                 </Modal>
 
                  <select className='lecturerSelector' onChange={handleSelected}>
@@ -81,7 +116,7 @@ const Lecturers = () => {
                  <p id='lecturerName'> שם מרצה: {lecturerName}</p>
                  <p id='lecturerID'>מזהה מרצה: {lecturerID}</p>
                  <p id='lecturerType'>סוג מרצה: {lecturerType}</p>
-            
+                 <p id='teachableCourses'>קורסים: {teachableCourses}</p>
 
             </section>
             <p></p>
@@ -90,8 +125,28 @@ const Lecturers = () => {
         <div className='circle2'></div>
         </>
     );
+
+    function handleUpdateClick() {
+        console.log(updateTC);
+        axios({
+            method:'post',
+            url:'/updateLecturer',
+            data:{
+                lecturerID:lecturerID,
+                lecturerName:updateName,
+                lecturerType:updateType,
+                teachableCourses:updateTC,
+            }
+        }).then(() => {
+            toggleUpdateModal();
+        })
+
+
+    }
     
 }
+
+
 
 const postDeleteLecturer = () => {
     console.log('SENDING REQUEST TO DELETE LECTURER');

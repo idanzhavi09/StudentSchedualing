@@ -4,7 +4,10 @@ import { useState } from 'react';
 import onoacademic from '../../images/onoacademic.png';
 import { DragDropContext , Droppable, Draggable } from 'react-beautiful-dnd';
 import uuid from 'uuid/dist/v4';
+
 const axios = require('axios').default;
+
+
 
 
 const Courses =[
@@ -29,11 +32,34 @@ const Courses =[
 const columnsFromBackend = 
   {
     [uuid()]: {
-      name:'Sunday',
+      name:'קורסים',
       items:Courses,
     },
     [uuid()]: {
-      name:'Monday',
+      name:'ראשון',
+      items:[],
+    },
+    [uuid()]: {
+      name:'שני',
+      items:[]
+    },
+    [uuid()]:{
+      name:'שלישי',
+      items:[]
+    }
+    ,
+    [uuid()]:{
+      name:'רביעי',
+      items:[]
+    }
+    ,
+    [uuid()]:{
+      name:'חמישי',
+      items:[]
+    }
+    ,
+    [uuid()]:{
+      name:'שישי',
       items:[]
     }
   };
@@ -42,34 +68,61 @@ const columnsFromBackend =
     if(!result.destination) return;
     
     const {source , destination} = result;
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const[removed] = copiedItems.splice(source.index , 1);
-    copiedItems.splice(destination.index , 0 , removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        items:copiedItems
-      }
-    })
+
+    if(source.droppableId !== destination.droppableId){
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index , 1);
+      destItems.splice(destination.index , 0 , removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items:sourceItems
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items:destItems
+        }
+      })
+    }
+    else{
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const[removed] = copiedItems.splice(source.index , 1);
+      copiedItems.splice(destination.index , 0 , removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items:copiedItems
+        }
+      })
+    }
+
   }
-const Assignment = () => {
+
 
     // axios({
     //     method:'GET',
     //     url:'/getCourses'
     // }).then((response) => console.log(response));
 
-    const [items , updateItems] = useState(Courses);
-    const [columns , setColumns] = useState(columnsFromBackend);
 
+const Assignment = () => {
+
+  const [items , updateItems] = useState(Courses);
+  const [columns , setColumns] = useState(columnsFromBackend);
+  
         return(
             <>
             <main>
                 <img id='onoLogo' src={onoacademic} alt="ono" />
                 <section className='glass'>
                     <h1 className='title'>מסך שיבוצים</h1>
+
                       <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
                         {Object.entries(columns).map(([id , column]) => {
                           return(
@@ -84,7 +137,7 @@ const Assignment = () => {
                                    ref={provided.innerRef}
                                     style={{background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey' ,
                                      padding:4,
-                                     width:250,
+                                     width:100,
                                      minHeight:500,
                                      }}>
                                       {column.items.map((item , index) => {
@@ -99,9 +152,10 @@ const Assignment = () => {
                                               style={{
                                                 userSelect:'none',
                                                 padding:16,
-                                                margin: '0 0 8px 0',
-                                                minHeight:'50px',
-                                                backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
+                                                margin: '10px 0 8px 0',
+                                                minHeight:'25px',
+                                                maxHeight:'25px',
+                                                backgroundColor: snapshot.isDragging ? '#66c79a' : '#7ceca2',
                                                 color:'white',
                                                 ...provided.draggableProps.style
                                               }}

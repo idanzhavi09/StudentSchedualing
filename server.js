@@ -78,6 +78,17 @@ connection.on("connect", err => {
         console.log('RECIEVED REQUEST TO RETRIEVE COURSES');
 
     })
+
+    app.post('/updateLecturer' , (req ,res) => {
+        console.log('RECIVED REQUEST TO UPDATE LECTURER');
+        let id = req.body.lecturerID;
+        let newName= req.body.lecturerName;
+        let newType = req.body.lecturerType;
+        let newteachableCourses = req.body.teachableCourses;
+        console.log('id: ' + id + '\n' + 'name: ' + newName + '\n' + 'type: ' +newType  + '\n' + 'courses: ' + newteachableCourses);
+
+        updateLecturer(id , newName , newType , newteachableCourses);
+    })
     
 
   }
@@ -88,7 +99,7 @@ connection.on("connect", err => {
 connection.connect();
 
  function getLecturers(){
-    let request = new Request('SELECT TOP (1000) [LecturerID],[LecturerName],[LecturerType] FROM [dbo].[Lecturer]' , function(err) {
+    let request = new Request('SELECT TOP (1000) [LecturerID],[LecturerName],[LecturerType],[TeachableCourses] FROM [dbo].[Lecturer]' , function(err) {
         if(err){
             console.log(err);
         }
@@ -148,6 +159,8 @@ function addLecturer( lecturerName , lecturerType , teachableCourses){
         else{
             request.on('done' , function(rowCount, more) {
                 console.log('FINISHED ADDING LECTURER');
+                console.log(rowCount + ' rows returned');  
+
             });
             request.on('requestCompleted' , function(rowCount, more) {
                 console.log('REQUEST COMPLETED');
@@ -176,6 +189,27 @@ function getCourses(){
         });
         return result;
     });
+}
+
+function updateLecturer(id ,name , type , teachableCourses){
+    console.log('UPDATING LECTURER...');
+    let request = new Request('UPDATE [dbo].[Lecturer] SET [LecturerName] = ' + "'" + name + + "'" + ', ' + '[LecturerType] = ' +"'" + type + "'" + ', ' + '[TeachableCourses] = ' + "'" + teachableCourses + "'" +  'WHERE [LecturerID] = ' +  id , function(err) {
+        if(err){
+            console.log('ERROR: ' + err.name);
+        }
+        else{
+            request.on('done' , function(rowCount, more) {
+                console.log('FINISHED UPDATING LECTURER');
+                console.log(rowCount + ' rows returned');  
+
+            });
+            request.on('requestCompleted' , function(rowCount, more) {
+                console.log('REQUEST COMPLETED');
+            })
+        }
+        });
+    connection.execSql(request);  
+    
 }
 
 app.use(express.static("build"));

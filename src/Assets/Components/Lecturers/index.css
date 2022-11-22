@@ -96,7 +96,7 @@ main{
 
 
 
-#lecturerName,#lecturerID,#lecturerType{
+#lecturerName,#lecturerID,#lecturerType,#teachableCourses{
   font-size: medium;
   position: absolute;
   right: 20%;
@@ -112,6 +112,10 @@ top: 22%;
 
 #lecturerType{
   top: 32%;
+}
+
+#teachableCourses{
+  top: 37%;
 }
 
 .mymodal {
