@@ -1,10 +1,10 @@
 import './index.css'
 import React  from 'react';
-import { useState } from 'react';
+import { useState , useRef } from 'react';
 import onoacademic from '../../images/onoacademic.png';
 import { DragDropContext , Droppable, Draggable } from 'react-beautiful-dnd';
 import uuid from 'uuid/dist/v4';
-
+import Scheduler from 'react-weekly-table';
 const axios = require('axios').default;
 
 
@@ -109,20 +109,21 @@ const columnsFromBackend =
     //     method:'GET',
     //     url:'/getCourses'
     // }).then((response) => console.log(response));
-
+const handleSubmitCourse = () => {
+  console.log('New Submission');
+}
 
 const Assignment = () => {
 
   const [items , updateItems] = useState(Courses);
   const [columns , setColumns] = useState(columnsFromBackend);
-  
         return(
             <>
             <main>
                 <img id='onoLogo' src={onoacademic} alt="ono" />
                 <section className='glass'>
                     <h1 className='title'>מסך שיבוצים</h1>
-
+                    <br />
                       <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
                         {Object.entries(columns).map(([id , column]) => {
                           return(
@@ -178,6 +179,7 @@ const Assignment = () => {
                           );
                         })}
                       </DragDropContext>
+                
                 </section>
             </main>
             <div className='circle1'></div>

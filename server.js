@@ -193,9 +193,10 @@ function getCourses(){
 
 function updateLecturer(id ,name , type , teachableCourses){
     console.log('UPDATING LECTURER...');
-    let request = new Request('UPDATE [dbo].[Lecturer] SET [LecturerName] = ' + "'" + name + + "'" + ', ' + '[LecturerType] = ' +"'" + type + "'" + ', ' + '[TeachableCourses] = ' + "'" + teachableCourses + "'" +  'WHERE [LecturerID] = ' +  id , function(err) {
+    let request = new Request('UPDATE [dbo].[Lecturer] SET [LecturerName] = ' + "'" + name + "'" + ', ' + '[LecturerType] = ' +"'" + type + "'" + ', ' + '[TeachableCourses] = ' + "'" + teachableCourses + "'" +  ' WHERE [LecturerID] = ' +  id , function(err) {
+        console.log(request);
         if(err){
-            console.log('ERROR: ' + err.name);
+            console.log('ERROR: ' + err);
         }
         else{
             request.on('done' , function(rowCount, more) {
