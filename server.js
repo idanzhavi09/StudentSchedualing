@@ -54,8 +54,6 @@ connection.on("connect", err => {
     getLecturers();
     console.log('GETTING LECTURERS...');
 
-    getCourses();
-    console.log('GETTING COURSES...');
 
     app.post('/delLecturer' , (req, res) => {
         console.log('RECIEVED REQUEST TO DELETE LECTURER');

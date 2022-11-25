@@ -129,7 +129,7 @@ const Assignment = () => {
                 <section className='glass'>
                     <h1 className='title'>מסך שיבוצים</h1>
                     <br />
-                      {/* <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
+                      <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
                         {Object.entries(columns).map(([id , column]) => {
                           return(
                             <div style={{display:'flex' , flexDirection:'column' , alignItems:'center'}}>
@@ -160,7 +160,6 @@ const Assignment = () => {
                                                 padding:16,
                                                 margin: '10px 0 8px 0',
                                                 minHeight:'25px',
-                                                maxHeight:'25px',
                                                 backgroundColor: snapshot.isDragging ? '#66c79a' : '#7ceca2',
                                                 color:'white',
                                                 ...provided.draggableProps.style
@@ -183,11 +182,8 @@ const Assignment = () => {
                             </div>
                           );
                         })}
-                      </DragDropContext> */}
+                      </DragDropContext>
                 
-                <div style={{ width: 1000, heigth: 600, position: 'relative' }} ref={ref}>
-            <Scheduler parentRef={ref} />
-          </div>;
 
                 </section>
             </main>
