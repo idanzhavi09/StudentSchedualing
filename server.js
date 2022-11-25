@@ -12,6 +12,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const https = require('https')
 const logger = require('morgan');
+const { ok } = require('assert');
 
 
 app.use(
@@ -50,8 +51,11 @@ connection.on("connect", err => {
   }
   else{
     console.log('successful');
-    console.log('Getting Lecturers...');
     getLecturers();
+    console.log('GETTING LECTURERS...');
+
+    getCourses();
+    console.log('GETTING COURSES...');
 
     app.post('/delLecturer' , (req, res) => {
         console.log('RECIEVED REQUEST TO DELETE LECTURER');
@@ -71,12 +75,14 @@ connection.on("connect", err => {
     app.post('/getLessons' , (req , res) => {
         console.log('RECIVED REQUEST TO GET LESSONS BY DATE');
         console.log(req.body);
-        res.send('Data recieved')
+        let coursesOfDay = getCoursesOfDay(req.body.dateRequested);
+        res.send(coursesOfDay)
     })
 
     app.post('/getCourses' , (req,res) => {
         console.log('RECIEVED REQUEST TO RETRIEVE COURSES');
-
+        let courses = getCourses();
+        res.send(courses);
     })
 
     app.post('/updateLecturer' , (req ,res) => {
@@ -88,6 +94,15 @@ connection.on("connect", err => {
         console.log('id: ' + id + '\n' + 'name: ' + newName + '\n' + 'type: ' +newType  + '\n' + 'courses: ' + newteachableCourses);
 
         updateLecturer(id , newName , newType , newteachableCourses);
+    })
+
+    app.post('/addCourse' , (req,res) => {
+        console.log('RECIEVED REQUEST TO ADD COURSE');
+        let courseName = req.body.courseName;
+        let courseFacultyId = req.body.courseFacultyId;
+        let coursePCI = req.body.coursePCI;
+        console.log('name:' + courseName + '\n' + 'CFI:' + courseFacultyId + '\n' + 'PCI:'+ coursePCI);
+        addCourse(courseName , courseFacultyId , coursePCI);
     })
     
 
@@ -172,23 +187,30 @@ function addLecturer( lecturerName , lecturerType , teachableCourses){
 
 function getCourses(){
     console.log('RETRIEVING COURSES...');
-    let request = new Request('SELECT * [LecturerID],[LecturerName],[LecturerType] FROM [dbo].[Lecturer]' , function(err) {
+    let request = new Request('SELECT TOP (1000) [CourseID],[CourseName],[FacultyID],[ParentCourseID] FROM [dbo].[Course]' , function(err) {
         if(err){
             console.log(err);
+        }else{
+            var result = [];
+            request.on('row',function(columns){
+                columns.forEach(function(column){
+                    if(column.value === null){
+                        console.log('NULL');
+                    }
+                    else{
+                        result.push(column.value);
+                    }
+                });
+                
+        
+            });
+            return result;
         }
+
     });
-    var result = [];
-    request.on('row',function(columns){
-        columns.forEach(function(column){
-            if(column.value === null){
-                console.log('NULL');
-            }
-            else{
-                result.push(column.value);
-            }
-        });
-        return result;
-    });
+
+
+    connection.execSql(request)
 }
 
 function updateLecturer(id ,name , type , teachableCourses){
@@ -211,6 +233,67 @@ function updateLecturer(id ,name , type , teachableCourses){
         });
     connection.execSql(request);  
     
+}
+
+function getCoursesOfDay(date){
+    let jsDate = new Date();
+    let dateArr = date.split('.');
+    console.log(dateArr);
+    jsDate.setDate(dateArr[0]);
+    jsDate.setMonth(dateArr[1] - 1);
+    jsDate.setFullYear(dateArr[2]);
+    console.log(jsDate);
+
+    let dayOfWeek = jsDate.getDay();
+    console.log(dayOfWeek + 1);
+
+    let result = [];
+
+    let request = new Request('SELECT TOP (1000) [LecturerID],[LecturerName],[CourseID],[CourseName],[SBID],[Campus],[Building],[Room],[StartTime],[EndTime] FROM [dbo].[CoursePlacementDetails] WHERE [DayOfWeek] = ' + (dayOfWeek + 1)  , function(err) {
+        console.log(request.sqlTextOrProcedure);
+        if(err){
+            console.log('ERROR: ' + err);
+        } else {
+            console.log('No Erros');
+            request.on('row' , function(columns) {
+                console.log(columns);
+                columns.forEach(function(column) {
+                    if(column.value === null){
+                        console.log('NULL');
+                    }
+                    else{
+                        result.push(column.values);
+                        }
+                });
+
+            });
+            request.on('requestCompleted' , function(rowCount , more) {
+                console.log('REQUEST COMPLETED');
+            })
+        }
+        console.log(result);
+        return result
+    })
+    connection.execSql(request);
+}
+
+function addCourse(name , CFI , PCI){
+    console.log('ADDING COURSE...');
+    let request = new Request('INSERT INTO [dbo].[Course] (CourseName,FacultyID,ParentCourseID) VALUES(' + "'" + name + "'" +', ' + "'" + CFI + "'" + ',' + "'" + PCI + "'" + ')' , function(err){
+        console.log(request);
+        if(err){
+            console.log('ERROR:' + err);
+        }else{
+            request.on('done' , function(rowCount , more){
+                console.log('Rows returned' + rowCount);
+            });
+            request.on('requestCompleted' , () => {
+                console.log('REQUEST COMPLETED');
+            })
+        }
+    })
+
+    connection.execSql(request);
 }
 
 app.use(express.static("build"));

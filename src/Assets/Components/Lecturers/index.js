@@ -3,6 +3,7 @@ import React  from 'react';
 import { useState } from 'react';
 import Modal from "react-modal";
 import Dialog from '../AddLecturerDialog';
+import BackButton from '../BackButton';
 var lecturerSelected;
 require('./index.css');
 const axios = require('axios').default;
@@ -91,6 +92,7 @@ const Lecturers = () => {
         <>
         <main>
             <img id='onoLogo' src={onoacademic} alt="ono" />
+            <BackButton />
             <section className='glass'>
                 <h1 className='title'>מסך מרצים</h1>
                 <button id='btnDel' onClick={postDeleteLecturer} className='buttons'>מחק</button>
@@ -127,7 +129,6 @@ const Lecturers = () => {
     );
 
     function handleUpdateClick() {
-        console.log(updateTC);
         axios({
             method:'post',
             url:'/updateLecturer',

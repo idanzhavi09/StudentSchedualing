@@ -60,3 +60,77 @@ main{
     top: 17% !important;
     right: 10%;
   }
+
+  .buttons{
+    z-index: 4;
+    width: 10%;
+    height: 7%;
+    font-size: large;
+    background: linear-gradient(
+        to right bottom,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.3)
+      );
+    border-width: 0;
+    border-radius: 2rem;
+  }
+  #btnAdd{
+    position: absolute;
+    top: 70%;
+    left: 5%;
+}
+
+#btnDel{
+  position: absolute;
+  top: 80%;
+  left: 5%;
+}
+
+#btnUpdate{
+  position: absolute;
+  top: 90%;
+  left: 5%;
+}
+
+.mymodal {
+  z-index: 5;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  border: 1px solid #ccc;
+  background: linear-gradient(to right top , #66c79a , #7ceca2);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+}
+
+.myoverlay {
+  z-index: 5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.courseSelector{
+  height: fit-content;
+  width: auto;
+  font-size: medium;
+  z-index: 4;
+  background: linear-gradient(
+        to right bottom,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.3)
+      );
+    border-width: 0;
+    border-radius: 2rem;
+
+    position: absolute;
+    top: 73%;
+    left: 20%;
+}

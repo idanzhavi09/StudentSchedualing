@@ -1,11 +1,13 @@
 import './index.css'
 import React  from 'react';
-import { useState , useRef } from 'react';
+import { useState , useRef ,useMemo , createRef , useCallback , FC } from 'react';
 import onoacademic from '../../images/onoacademic.png';
 import { DragDropContext , Droppable, Draggable } from 'react-beautiful-dnd';
 import uuid from 'uuid/dist/v4';
 import Scheduler from 'react-weekly-table';
+import BackButton from '../BackButton';
 const axios = require('axios').default;
+
 
 
 
@@ -117,14 +119,17 @@ const Assignment = () => {
 
   const [items , updateItems] = useState(Courses);
   const [columns , setColumns] = useState(columnsFromBackend);
+  const ref = useRef(null);
+
         return(
             <>
             <main>
                 <img id='onoLogo' src={onoacademic} alt="ono" />
+                <BackButton />
                 <section className='glass'>
                     <h1 className='title'>מסך שיבוצים</h1>
                     <br />
-                      <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
+                      {/* <DragDropContext onDragEnd={result => onDragEnd(result , columns , setColumns)}>
                         {Object.entries(columns).map(([id , column]) => {
                           return(
                             <div style={{display:'flex' , flexDirection:'column' , alignItems:'center'}}>
@@ -178,8 +183,12 @@ const Assignment = () => {
                             </div>
                           );
                         })}
-                      </DragDropContext>
+                      </DragDropContext> */}
                 
+                <div style={{ width: 1000, heigth: 600, position: 'relative' }} ref={ref}>
+            <Scheduler parentRef={ref} />
+          </div>;
+
                 </section>
             </main>
             <div className='circle1'></div>
