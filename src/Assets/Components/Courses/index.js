@@ -41,8 +41,22 @@ const Courses = () => {
     const [addFacultyId , setAddFacultyId] = useState("");
     const [addPCI , setAddPCI] = useState("");
     const [Course , setCourse] = useState();
+    const [dayOfWeek , setDayOfWeek] = useState(0);
 
     function onChange(nextValue){
+
+        
+        let jsDate = new Date();
+        let date = nextValue.toLocaleDateString()
+        console.log('fixed:' + date);
+        let dateArr = date.split('.');
+        jsDate.setDate(dateArr[0]);
+        jsDate.setMonth(dateArr[1] - 1);
+        jsDate.setFullYear(dateArr[2]);
+    
+        let dayOfWeekin = jsDate.getDay() + 1;
+
+        setDayOfWeek(dayOfWeekin)
         setValue(nextValue);
         console.log(nextValue);
         axios({
@@ -82,7 +96,45 @@ const Courses = () => {
                 coursePCI:addPCI,
             }
         }).then(response => ()=>{if(response.status === 200){console.log('FINISHED ADDING LECTURER')} else{console.log( ' \n' + 'status:' + response.status);}})
-    }
+    };
+
+    let coursesForEachDay = [
+        {
+        CourseName:'מבני נתונים',
+        lecName:'עידן זהבי',
+        classroom:'445',
+        time:'4:15',
+        dayOfWeek:'1'
+        },
+        {
+        CourseName:'אלגוריתמים',
+        lecName:'רואי אלאור',
+        classroom:'327',
+        time:'4:15',
+        dayOfWeek:'2',
+        },
+        {
+        CourseName:'מבני נתונים',
+        lecName:'אהרון',
+        classroom:'445',
+        time:'4:15',
+        dayOfWeek:'3',
+        },
+        {
+        CourseName:'יזמות',
+        lecName:'רואי אלאור',
+        classroom:'327',
+        time:'4:15',
+        dayOfWeek:'4',
+        },
+        {
+        CourseName:'סייבר ואבטחת מידע',
+        lecName:'רואי אלאור',
+        classroom:'327',
+        time:'4:15',
+        dayOfWeek:'5',
+        },
+]
 
     return(
         <>
@@ -94,7 +146,7 @@ const Courses = () => {
                     <Calendar id='calendar' onChange={onChange} onClickDay={()=> {console.log(value)}} value={value}/>
                     <div className='lessons'>
                     <ScrollView style={{ height: '100vh' }}>
-                    <Lesson />
+                    {coursesForEachDay.map(lesson => {if(lesson.dayOfWeek==dayOfWeek) {return (<Lesson key={lesson.CourseName} courseName={lesson.CourseName} lecName={lesson.lecName} classroom={lesson.classroom} time={lesson.time} />)} })}
                     </ScrollView>
                     </div>
                     

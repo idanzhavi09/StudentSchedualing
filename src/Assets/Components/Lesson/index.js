@@ -2,14 +2,15 @@ import React  from 'react';
 import { useState } from 'react';
 import './index.css';
 
-const Lesson = () => {
+const Lesson = (props) => {
+    const {courseName , lecName , classroom , time} = props;
     return(
         <>
             <div className='lessonContainer'>
-                <p>שם קורס:</p>
-                <p>שם מרצה:</p>
-                <p>כיתה:</p>
-                <p>אורך שיעור:</p>
+                <p>שם קורס: {courseName}</p>
+                <p>שם מרצה:{lecName}</p>
+                <p>כיתה:{classroom}</p>
+                <p>אורך שיעור:{time}</p>
             </div>
         </>
     );

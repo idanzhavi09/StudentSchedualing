@@ -247,7 +247,7 @@ function getCoursesOfDay(date){
 
     let result = [];
 
-    let request = new Request('SELECT TOP (1000) [LecturerID],[LecturerName],[CourseID],[CourseName],[SBID],[Campus],[Building],[Room],[StartTime],[EndTime] FROM [dbo].[CoursePlacementDetails] WHERE [DayOfWeek] = ' + (dayOfWeek + 1)  , function(err) {
+    let request = new Request('SELECT sb.ScheduleBlockID, sb.DayOfWeek, sb.StartTime, DATEADD(minute, 45, sb.StartTime) AS EndTime, sb.RoomID, r.RoomName, r.Floor, b.BuildingName, c.CampusName, dc.DegreeClassName, d.DegreeName, f.FacultyName, sb.SemesterID, sb.DegreeClassID FROM  dbo.ScheduleBlock AS sb INNER JOIN dbo.Room AS r ON r.RoomID = sb.RoomID INNER JOIN dbo.Building AS b ON b.BuildingID = r.BuildingID INNER JOIN dbo.Campus AS c ON c.CampusID = b.CampusID INNER JOIN dbo.DegreeClass AS dc ON dc.DegreeClassID = sb.DegreeClassID INNER JOIN dbo.Degree' , function(err) {
         console.log(request.sqlTextOrProcedure);
         if(err){
             console.log('ERROR: ' + err);
