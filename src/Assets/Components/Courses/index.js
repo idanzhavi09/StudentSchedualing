@@ -59,14 +59,14 @@ const Courses = () => {
         setDayOfWeek(dayOfWeekin)
         setValue(nextValue);
         console.log(nextValue);
-        axios({
-            method:'post',
-            url:'/getLessons',
-            data:{
-                dateRequested:nextValue.toLocaleDateString(),
-            }
-        }).then((res)=> console.log('LESSONS RETRIEVED' + '\n' + res))
-        .catch((err)=> console.log('ERROR:' + err))
+        // axios({
+        //     method:'post',
+        //     url:'/getLessons',
+        //     data:{
+        //         dateRequested:nextValue.toLocaleDateString(),
+        //     }
+        // }).then((res)=> console.log('LESSONS RETRIEVED' + '\n' + res))
+        // .catch((err)=> console.log('ERROR:' + err))
     }
 
     function toggleAddModal() {
