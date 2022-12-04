@@ -13,6 +13,9 @@ const bodyParser = require('body-parser');
 const https = require('https')
 const logger = require('morgan');
 const { ok } = require('assert');
+const { resolve } = require('path');
+const { resetServerContext } = require('react-beautiful-dnd');
+const { request } = require('http');
 
 
 app.use(
@@ -72,9 +75,13 @@ connection.on("connect", err => {
     })
     app.post('/getLessons' , (req , res) => {
         console.log('RECIVED REQUEST TO GET LESSONS BY DATE');
-        console.log(req.body);
-        let coursesOfDay = getCoursesOfDay(req.body.dateRequested);
-        res.send(coursesOfDay)
+        async function getResult(){
+            getCoursesOfDay(req.body.dateRequested).then((result) => {
+                res.send(result);
+            })
+        }
+        getResult();
+
     })
 
     app.post('/getCourses' , (req,res) => {
@@ -207,7 +214,6 @@ function getCourses(){
 
     });
 
-
     connection.execSql(request)
 }
 
@@ -233,46 +239,46 @@ function updateLecturer(id ,name , type , teachableCourses){
     
 }
 
-function getCoursesOfDay(date){
+async function getCoursesOfDay(date){
     let jsDate = new Date();
     let dateArr = date.split('.');
-    console.log(dateArr);
     jsDate.setDate(dateArr[0]);
     jsDate.setMonth(dateArr[1] - 1);
     jsDate.setFullYear(dateArr[2]);
-    console.log(jsDate);
-
     let dayOfWeek = jsDate.getDay();
-    console.log(dayOfWeek + 1);
-
+    let promise = new Promise((resolve , reject) => {
     let result = [];
-
-    let request = new Request('SELECT sb.ScheduleBlockID, sb.DayOfWeek, sb.StartTime, DATEADD(minute, 45, sb.StartTime) AS EndTime, sb.RoomID, r.RoomName, r.Floor, b.BuildingName, c.CampusName, dc.DegreeClassName, d.DegreeName, f.FacultyName, sb.SemesterID, sb.DegreeClassID FROM  dbo.ScheduleBlock AS sb INNER JOIN dbo.Room AS r ON r.RoomID = sb.RoomID INNER JOIN dbo.Building AS b ON b.BuildingID = r.BuildingID INNER JOIN dbo.Campus AS c ON c.CampusID = b.CampusID INNER JOIN dbo.DegreeClass AS dc ON dc.DegreeClassID = sb.DegreeClassID INNER JOIN dbo.Degree' , function(err) {
-        console.log(request.sqlTextOrProcedure);
+    let request = new Request(process.env.GET_LESSONS_OF_DAY , (err) => {
         if(err){
-            console.log('ERROR: ' + err);
-        } else {
-            console.log('No Erros');
-            request.on('row' , function(columns) {
-                console.log(columns);
-                columns.forEach(function(column) {
-                    if(column.value === null){
-                        console.log('NULL');
-                    }
-                    else{
-                        result.push(column.values);
-                        }
-                });
-
-            });
-            request.on('requestCompleted' , function(rowCount , more) {
-                console.log('REQUEST COMPLETED');
-            })
+            console.log(err);
         }
-        console.log(result);
-        return result
     })
+    request.on('row' , (columns) => {
+        columns.forEach((column) => {
+            if(column.value === null) {
+                console.log('NULL');
+            }else{
+                result.push(column.value)
+            }
+        })
+    });
+    request.on('done' , (rowCount , more) => {
+        console.log('DONE!');
+        console.log(rowCount + ' rows returned');
+        console.log('MORE: ' + '\n' + more);
+    })
+    request.on('requestCompleted' , () => {
+        console.log('REQUEST COMPLETED');
+        if(result != null || undefined){
+            resolve(result);
+        }else{
+            let err = new Error('result was either null or undefined')
+            reject(err);
+        }
+    });
     connection.execSql(request);
+    })
+    return promise;
 }
 
 function addCourse(name , CFI , PCI){

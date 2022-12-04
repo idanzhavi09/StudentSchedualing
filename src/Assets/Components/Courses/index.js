@@ -23,6 +23,16 @@ class CourseClass{
     }
 }
 
+class LessonClass{
+    constructor(courseName , lecturerName , classroom , startTime , endTime , dayOfWeek){
+        this.courseName = courseName;
+        this.lecturerName = lecturerName;
+        this.classroom = classroom;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.dayOfWeek = dayOfWeek;
+    }
+}
 
 const Courses = () => {
     // function getCourses () {
@@ -42,31 +52,46 @@ const Courses = () => {
     const [addPCI , setAddPCI] = useState("");
     const [Course , setCourse] = useState();
     const [dayOfWeek , setDayOfWeek] = useState(0);
+    const [classesArr , setClassesArr] = useState([]);
 
-    function onChange(nextValue){
-
-        
+     function onChange(nextValue){
         let jsDate = new Date();
         let date = nextValue.toLocaleDateString()
-        console.log('fixed:' + date);
         let dateArr = date.split('.');
         jsDate.setDate(dateArr[0]);
         jsDate.setMonth(dateArr[1] - 1);
-        jsDate.setFullYear(dateArr[2]);
-    
+        jsDate.setFullYear(dateArr[2]);    
         let dayOfWeekin = jsDate.getDay() + 1;
-
         setDayOfWeek(dayOfWeekin)
         setValue(nextValue);
-        console.log(nextValue);
-        // axios({
-        //     method:'post',
-        //     url:'/getLessons',
-        //     data:{
-        //         dateRequested:nextValue.toLocaleDateString(),
-        //     }
-        // }).then((res)=> console.log('LESSONS RETRIEVED' + '\n' + res))
-        // .catch((err)=> console.log('ERROR:' + err))
+        axios({
+            method:'post',
+            url:'/getLessons',
+            data: {
+                dateRequested: nextValue.toLocaleDateString(),
+            }
+        })
+        .then((res) => {
+            for(let i = 0; i < res.data.length - 1; i += 11){
+
+
+                let courseName = res.data[i + 3];
+                let lecturerName = res.data[i + 1];
+                let classroom = res.data[i + 7];
+                let startTime = res.data[i + 9];
+                let endTime = res.data[i + 10];
+                let dayOfWeek = res.data[i + 8];
+
+                let lesson = new LessonClass(courseName , lecturerName , classroom , startTime , endTime , dayOfWeek);
+                classesArr.push(lesson);
+                
+            }
+            console.log(classesArr);
+        })
+        .catch((err) => {
+            console.log('ERROR:' + err);
+        })
+
     }
 
     function toggleAddModal() {
@@ -98,43 +123,7 @@ const Courses = () => {
         }).then(response => ()=>{if(response.status === 200){console.log('FINISHED ADDING LECTURER')} else{console.log( ' \n' + 'status:' + response.status);}})
     };
 
-    let coursesForEachDay = [
-        {
-        CourseName:'מבני נתונים',
-        lecName:'עידן זהבי',
-        classroom:'445',
-        time:'4:15',
-        dayOfWeek:'1'
-        },
-        {
-        CourseName:'אלגוריתמים',
-        lecName:'רואי אלאור',
-        classroom:'327',
-        time:'4:15',
-        dayOfWeek:'2',
-        },
-        {
-        CourseName:'מבני נתונים',
-        lecName:'אהרון',
-        classroom:'445',
-        time:'4:15',
-        dayOfWeek:'3',
-        },
-        {
-        CourseName:'יזמות',
-        lecName:'רואי אלאור',
-        classroom:'327',
-        time:'4:15',
-        dayOfWeek:'4',
-        },
-        {
-        CourseName:'סייבר ואבטחת מידע',
-        lecName:'רואי אלאור',
-        classroom:'327',
-        time:'4:15',
-        dayOfWeek:'5',
-        },
-]
+
 
     return(
         <>
@@ -143,10 +132,10 @@ const Courses = () => {
                 <BackButton />
                 <section className='glass'>
                     <h1 className='title'>מסך קורסים</h1>
-                    <Calendar id='calendar' onChange={onChange} onClickDay={()=> {console.log(value)}} value={value}/>
+                    <Calendar id='calendar' onChange={onChange} value={value}/>
                     <div className='lessons'>
                     <ScrollView style={{ height: '100vh' }}>
-                    {coursesForEachDay.map(lesson => {if(lesson.dayOfWeek==dayOfWeek) {return (<Lesson key={lesson.CourseName} courseName={lesson.CourseName} lecName={lesson.lecName} classroom={lesson.classroom} time={lesson.time} />)} })}
+                    {classesArr.map(lesson => {if(lesson.dayOfWeek==dayOfWeek) {return (<Lesson key={lesson.courseName} courseName={lesson.courseName} lecName={lesson.lecturerName} classroom={lesson.classroom} startTime={lesson.startTime} endTime={lesson.endTime} />)} })}
                     </ScrollView>
                     </div>
                     
