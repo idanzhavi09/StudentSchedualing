@@ -55,6 +55,7 @@ const Courses = () => {
     const [classesArr , setClassesArr] = useState([]);
 
      function onChange(nextValue){
+        // setClassesArr([]);
         let jsDate = new Date();
         let date = nextValue.toLocaleDateString()
         let dateArr = date.split('.');
@@ -73,8 +74,6 @@ const Courses = () => {
         })
         .then((res) => {
             for(let i = 0; i < res.data.length - 1; i += 11){
-
-
                 let courseName = res.data[i + 3];
                 let lecturerName = res.data[i + 1];
                 let classroom = res.data[i + 7];
@@ -86,7 +85,6 @@ const Courses = () => {
                 classesArr.push(lesson);
                 
             }
-            console.log(classesArr);
         })
         .catch((err) => {
             console.log('ERROR:' + err);
@@ -135,7 +133,15 @@ const Courses = () => {
                     <Calendar id='calendar' onChange={onChange} value={value}/>
                     <div className='lessons'>
                     <ScrollView style={{ height: '100vh' }}>
-                    {classesArr.map(lesson => {if(lesson.dayOfWeek==dayOfWeek) {return (<Lesson key={lesson.courseName} courseName={lesson.courseName} lecName={lesson.lecturerName} classroom={lesson.classroom} startTime={lesson.startTime} endTime={lesson.endTime} />)} })}
+                    {classesArr.map(lesson => {
+                        console.log(lesson);
+                        if(lesson.dayOfWeek === dayOfWeek){
+                            return(
+                                <Lesson courseName={lesson.courseName} lecName={lesson.lecturerName} classroom={lesson.classroom} 
+                                startTime = {lesson.startTime} endTime={lesson.endTime} />
+                            )
+                        }
+                    })}
                     </ScrollView>
                     </div>
                     
