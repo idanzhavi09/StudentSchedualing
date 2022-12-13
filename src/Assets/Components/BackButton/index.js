@@ -12,7 +12,7 @@ const BackButton = () => {
     }
     return(
         <>
-            <img id='backButtonimg' src={backButtonImg} onClick={sendBack} />
+            <img id='backButtonimg' alt='Back' src={backButtonImg} onClick={sendBack} />
         </>
     );
 

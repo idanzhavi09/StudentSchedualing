@@ -43,9 +43,10 @@ function findLecturerByName(name){
 }
 
 
+
+
             
 const Lecturers = () => {
-    const [value, onChange] = useState(new Date());
     const [lecturerName , setLecturerName] = useState("")
     const [lecturerID ,setLecturerID] = useState("")
     const [lecturerType , setLecturerType] = useState("")

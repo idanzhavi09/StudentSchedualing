@@ -1,6 +1,6 @@
 import onoacademic from '../../images/onoacademic.png';
 import React  from 'react';
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import Lesson from '../Lesson/index';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -34,17 +34,13 @@ class LessonClass{
     }
 }
 
+
+
 const Courses = () => {
-    // function getCourses () {
-    //     axios({
-    //         method:'post',
-    //         url:'/getCourses',
-    //     }).then(response => {setCoursesArr(response.data)})
-    // }
-    // getCourses();
+
 
     const [value, setValue] = useState(new Date());
-    const [CoursesArr , setCoursesArr] = useState(new Array);
+    const [CoursesArr , setCoursesArr] = useState([]);
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isUpdateOpen , setUpdateOpen] = useState(false);
     const [addCourseName , setAddCourseName] = useState("");
@@ -53,9 +49,30 @@ const Courses = () => {
     const [Course , setCourse] = useState();
     const [dayOfWeek , setDayOfWeek] = useState(0);
     const [classesArr , setClassesArr] = useState([]);
+    const [facultyArr , setFacultyArr] = useState(new Array());
+
+
+    useEffect(() => {
+        async function getCoursesByFaculty(faculty){
+            axios({
+                method:'POST',
+                url:'getCoursesByFaculty',
+                data:{
+                    "faculty":faculty,
+                }
+            }).then((res) => {
+                setCoursesArr(res.data);
+                console.log(res.data);
+            }).catch((err) => {
+                console.log('ERROR: ' + err);
+            })        
+        }
+
+        getCoursesByFaculty('j');
+    } , []);
+
 
      function onChange(nextValue){
-        // setClassesArr([]);
         let jsDate = new Date();
         let date = nextValue.toLocaleDateString()
         let dateArr = date.split('.');
@@ -118,7 +135,7 @@ const Courses = () => {
                 courseFacultyId:addFacultyId,
                 coursePCI:addPCI,
             }
-        }).then(response => ()=>{if(response.status === 200){console.log('FINISHED ADDING LECTURER')} else{console.log( ' \n' + 'status:' + response.status);}})
+        }).then(response => ()=>{if(response.status === 200){console.log('FINISHED ADDING COURSE')} else{console.log( ' \n' + 'status:' + response.status);}})
     };
 
 
@@ -147,7 +164,7 @@ const Courses = () => {
                     
                      <select className='courseSelector' /*onChange={handleSelected}*/>
                     <option>בחר קורס</option>
-                    {CoursesArr.map((course) => <option>{course.courseName}</option>)}
+                    {CoursesArr.map((course) => <option>{course.toString()}</option>)}
                     </select> 
 
                     <button id='btnDel' /*onClick={postDelteCourse}*/ className='buttons'>מחק</button>

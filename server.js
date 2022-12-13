@@ -84,11 +84,18 @@ connection.on("connect", err => {
 
     })
 
-    app.post('/getCourses' , (req,res) => {
+    app.post('/getCoursesByFaculty' , (req,res) => {
         console.log('RECIEVED REQUEST TO RETRIEVE COURSES');
-        let courses = getCourses();
-        res.send(courses);
-    })
+        let faculty = req.body.faculty;
+        async function getCourses(){
+            getCoursesByFaculty(faculty).then((result) => {
+                res.send(result);
+            }).catch((err) => {
+                res.send(err);
+            })
+        }
+        getCourses();
+    });
 
     app.post('/updateLecturer' , (req ,res) => {
         console.log('RECIVED REQUEST TO UPDATE LECTURER');
@@ -190,31 +197,43 @@ function addLecturer( lecturerName , lecturerType , teachableCourses){
     connection.execSql(request);  
 }
 
-function getCourses(){
+async function getCoursesByFaculty(faculty){
     console.log('RETRIEVING COURSES...');
-    let request = new Request('SELECT TOP (1000) [CourseID],[CourseName],[FacultyID],[ParentCourseID] FROM [dbo].[Course]' , function(err) {
-        if(err){
-            console.log(err);
-        }else{
-            var result = [];
-            request.on('row',function(columns){
-                columns.forEach(function(column){
-                    if(column.value === null){
-                        console.log('NULL');
-                    }
-                    else{
+    console.log(faculty);
+    let promise = new Promise((resolve , reject) => {
+        let result = [];
+        console.log('IN PROMISE');
+        let request = new Request('SELECT [CourseName] FROM [dbo].[Course]' , (err) => {
+            if(err){
+                console.log('Error:' + err);
+            }
+        })
+            request.on('row' , ((columns) => {
+                columns.forEach((column) => {
+                    if(column.value === null || undefined) {
+                        console.log('VALUE WAS NULL OR UNDEFINED');
+                    }else{
                         result.push(column.value);
                     }
-                });
-                
-        
+                })
+            }))
+            request.on('done' , (rowCount , more) => {
+                console.log('DONE!');
             });
-            return result;
-        }
+            request.on('requestCompleted' ,() => {
+                console.log('REQUEST COMPLETED');
+                if(result == null || undefined){
+                    reject('result was null or undefined');
+                }else{
+                    resolve(result);
+                }
+            })
 
-    });
 
-    connection.execSql(request)
+        connection.execSql(request);
+
+    })
+    return promise;
 }
 
 function updateLecturer(id ,name , type , teachableCourses){
