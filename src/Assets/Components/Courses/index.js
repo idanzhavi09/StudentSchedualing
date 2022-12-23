@@ -41,12 +41,16 @@ const Courses = () => {
 
     const [value, setValue] = useState(new Date());
     const [CoursesArr , setCoursesArr] = useState([]);
+    const [UpdatedCourseName , setUpdatedCourseName] = useState("");
+    const [UpdatedCourseFacultyID , setUpdatedCourseFacultyID] = useState("");
+    const [UpdatedCoursePCI , setUpdatedCoursePCI] = useState("");
+
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isUpdateOpen , setUpdateOpen] = useState(false);
     const [addCourseName , setAddCourseName] = useState("");
     const [addFacultyId , setAddFacultyId] = useState("");
     const [addPCI , setAddPCI] = useState("");
-    const [Course , setCourse] = useState();
+    const [Course , setCourse] = useState("");
     const [dayOfWeek , setDayOfWeek] = useState(0);
     const [classesArr , setClassesArr] = useState([]);
     const [facultyArr , setFacultyArr] = useState(new Array());
@@ -73,6 +77,10 @@ const Courses = () => {
 
 
      function onChange(nextValue){
+        // useEffect(() => {
+        //     setClassesArr([]);
+        // } , [])
+        console.log('Classes Array:' + classesArr);
         let jsDate = new Date();
         let date = nextValue.toLocaleDateString()
         let dateArr = date.split('.');
@@ -102,6 +110,7 @@ const Courses = () => {
                 classesArr.push(lesson);
                 
             }
+            console.log('New Classes Array' + classesArr);
         })
         .catch((err) => {
             console.log('ERROR:' + err);
@@ -126,6 +135,18 @@ const Courses = () => {
     function handleChangeAddPCI(e){
         setAddPCI(e.target.value);
     }
+
+    function handleChangeUpdateName(e){
+        setUpdatedCourseName(e.target.value);
+    }
+
+    function handleChangeUpdateFacultyId(e){
+        setUpdatedCourseName(e.target.value);
+    }
+    function handleChangeUpdatePCI(e){
+        setUpdatedCoursePCI(e.target.value);
+    }
+
     function handleAddClick(e){
         axios({
             method:'post',
@@ -137,6 +158,41 @@ const Courses = () => {
             }
         }).then(response => ()=>{if(response.status === 200){console.log('FINISHED ADDING COURSE')} else{console.log( ' \n' + 'status:' + response.status);}})
     };
+
+    function handleDelClick(e){
+        axios({
+            method:'post',
+            url:'/delCourse',
+            data:{
+                courseName:Course,
+            }
+        }).then((res) => {
+            console.log('RESULT:' + res.status);
+        })
+    }
+
+    function handleUpdateClick(e){
+        axios({
+            method:'post',
+            url:'/updateCourse',
+            data:{
+                courseName:Course,
+                UpdatedCourseName:UpdatedCourseName,
+                UpdatedCourseFacultyID:UpdatedCourseFacultyID,
+                UpdatedCoursePCI:UpdatedCoursePCI,
+            }
+        }).then((res) => {
+            if(res === 200){
+                console.log('SUCCESSFUL UPDATE!');
+            }
+        }).catch((err) => {
+            console.log('ERR: ' + err);
+        })
+    }
+
+    function handleChangeCourseSelection(e){
+        setCourse(e.target.value);
+    }
 
 
 
@@ -151,7 +207,6 @@ const Courses = () => {
                     <div className='lessons'>
                     <ScrollView style={{ height: '100vh' }}>
                     {classesArr.map(lesson => {
-                        console.log(lesson);
                         if(lesson.dayOfWeek === dayOfWeek){
                             return(
                                 <Lesson courseName={lesson.courseName} lecName={lesson.lecturerName} classroom={lesson.classroom} 
@@ -162,12 +217,12 @@ const Courses = () => {
                     </ScrollView>
                     </div>
                     
-                     <select className='courseSelector' /*onChange={handleSelected}*/>
+                     <select className='courseSelector' onChange={handleChangeCourseSelection}>
                     <option>בחר קורס</option>
                     {CoursesArr.map((course) => <option>{course.toString()}</option>)}
                     </select> 
 
-                    <button id='btnDel' /*onClick={postDelteCourse}*/ className='buttons'>מחק</button>
+                    {/* <button id='btnDel' onClick={handleDelClick} className='buttons'>מחק</button> */}
                     <button id='btnUpdate' onClick={toggleUpdateModal} className='buttons'>עדכן</button>
                     <button id='btnAdd' onClick={toggleAddModal} className='buttons'>הוסף</button>
 
@@ -179,10 +234,10 @@ const Courses = () => {
                     </Modal>
 
                     <Modal isOpen={isUpdateOpen} onRequestClose={toggleUpdateModal}contentLabel="My dialog" className="mymodal" overlayClassName="myoverlay">
-                        <input type={'text'} onChange={handleChangeAddName} placeholder='שם קורס'></input>
-                        <input type={'text'} onChange={handleChangeAddFacultyId} placeholder='מזהה חוג'></input>
-                        <input type={'text'} onChange={handleChangeAddPCI} placeholder='מזהה קורס אם'></input>
-                        <button  /*onClick={handleUpdateClick}*/>עדכן</button>
+                        <input type={'text'} onChange={handleChangeUpdateName} placeholder='שם קורס'></input>
+                        <input type={'text'} onChange={handleChangeUpdateFacultyId} placeholder='מזהה חוג'></input>
+                        <input type={'text'} onChange={handleChangeUpdatePCI} placeholder='מזהה קורס אם'></input>
+                        <button  onClick={handleUpdateClick}>עדכן</button>
                     </Modal>
 
                 </section>

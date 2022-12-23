@@ -16,6 +16,7 @@ const { ok } = require('assert');
 const { resolve } = require('path');
 const { resetServerContext } = require('react-beautiful-dnd');
 const { request } = require('http');
+const { runInNewContext } = require('vm');
 
 
 app.use(
@@ -115,6 +116,37 @@ connection.on("connect", err => {
         let coursePCI = req.body.coursePCI;
         console.log('name:' + courseName + '\n' + 'CFI:' + courseFacultyId + '\n' + 'PCI:'+ coursePCI);
         addCourse(courseName , courseFacultyId , coursePCI);
+    })
+
+    app.post('/delCourse' , (req,res) => {
+        console.log('RECIEVED REQUEST TO DELETE COURSE');
+        let courseName = req.body.courseName;
+        delCourse(courseName);
+        res.sendStatus(200);
+    })
+
+    app.post('/updateCourse' , (req , res) => {
+        console.log('RECIEVED REQUEST TO UPDATE COURSE');
+        let courseName = req.body.courseName;
+        let updatedcourseName = req.body.UpdatedCourseName;
+        let courseFacultyId = req.body.UpdatedCourseFacultyID;
+        let coursePCI = req.body.UpdatedCoursePCI;
+        async function startUpdateCourse(){
+            updateCourse(courseName , updatedcourseName , courseFacultyId , coursePCI).then((result) => {
+                if(result === 200) {
+                    return 200;
+                }
+             }).catch((err) => {
+                return err;
+             })
+            } 
+
+        startUpdateCourse().then((result) => {
+            res.send(result);
+        }).catch((err) => {
+            res.send(err);
+        })
+        
     })
     
 
@@ -318,6 +350,52 @@ function addCourse(name , CFI , PCI){
 
     connection.execSql(request);
 }
+
+function delCourse(courseName){
+    console.log('STARTED TO DELETE COURSE');
+        let request = new Request('DELETE FROM [dbo].[Course] WHERE [CourseName] = ' + courseName , (err) => {
+            if(err){
+                console.log('ERROR:' + err);
+            }
+        })
+        request.on('done' , (rowCount, more) => {
+            console.log('DONE!');
+        })
+        request.on('requestCompleted' , () => {
+            console.log('REQUEST COMPLETED!');
+        })
+        connection.execSql(request);
+}
+
+function updateCourse(courseName , updatedCourseName , UpdatedCourseFacultyID , updatedCoursePCI){
+    console.log('STARTING TO UPDATE LECTURER');
+    let promise = new Promise((resolve , reject) => {
+        let req = new Request('UPDATE [dbo].[Course] SET CourseName = ' + updatedCourseName + ','
+        + ' FacultyID = ' + UpdatedCourseFacultyID + ' ,' + 'ParentCourseID = ' + updatedCoursePCI + 
+        'WHERE CourseName =' + courseName , (err) => {
+           if(err){
+               console.log('ERROR: ' + err);
+           }
+        });
+        req.on('done' , (rowCount , more) => {
+           console.log('DONE!');
+        });
+        req.on('requestCompleted' , () => {
+           console.log('REQUEST COMPLETED!');
+           resolve(200);
+        });
+
+        req.on('error' , (err) => {
+            reject(err);
+        })
+   
+        Connection.execSql(req);
+    })
+    return promise;
+
+}
+
+
 
 app.use(express.static("build"));
 
