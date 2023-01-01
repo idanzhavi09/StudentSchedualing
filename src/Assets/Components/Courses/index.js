@@ -141,7 +141,7 @@ const Courses = () => {
     }
 
     function handleChangeUpdateFacultyId(e){
-        setUpdatedCourseName(e.target.value);
+        setUpdatedCourseFacultyID(e.target.value);
     }
     function handleChangeUpdatePCI(e){
         setUpdatedCoursePCI(e.target.value);
@@ -182,7 +182,7 @@ const Courses = () => {
                 UpdatedCoursePCI:UpdatedCoursePCI,
             }
         }).then((res) => {
-            if(res === 200){
+            if(res.status === 200){
                 console.log('SUCCESSFUL UPDATE!');
             }
         }).catch((err) => {

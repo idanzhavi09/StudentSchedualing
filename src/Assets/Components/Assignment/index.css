@@ -59,3 +59,22 @@ main{
     margin: 0;
   }
   
+  .buttons{
+    z-index: 4;
+    width: 10%;
+    height: 7%;
+    font-size: large;
+    background: linear-gradient(
+        to right bottom,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.3)
+      );
+    border-width: 0;
+    border-radius: 2rem;
+  }
+
+  .btnAdd{
+    position: absolute;
+    left: 5%;
+    top: 20%;
+  }

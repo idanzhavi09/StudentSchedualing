@@ -18,6 +18,15 @@ const { resetServerContext } = require('react-beautiful-dnd');
 const { request } = require('http');
 const { runInNewContext } = require('vm');
 
+class CourseClass{
+    constructor(courseName , lecturer , startTime , endTime , dayOfWeek) {
+      this.courseName = courseName;
+      this.lecturer = lecturer;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.dayOfWeek = dayOfWeek;
+    }
+  }
 
 app.use(
     cors({
@@ -72,7 +81,6 @@ connection.on("connect", err => {
         console.log(type + " " + name + " " + teachableCourses);
         console.log('STARTED ADDING LECTURER...');
         addLecturer(name , type , teachableCourses);
-
     })
     app.post('/getLessons' , (req , res) => {
         console.log('RECIVED REQUEST TO GET LESSONS BY DATE');
@@ -147,6 +155,19 @@ connection.on("connect", err => {
             res.send(err);
         })
         
+    })
+
+    app.post('/getClasses' , (req , res) => {
+        console.log('RECIEVED REQUEST TO RETRIEVE CLASSES');
+        async function getClassesResult(){
+            let results = await getClasses();
+            console.log('RESULTS:' + results);
+            return results;
+        };
+        getClassesResult().then((result) => {
+            console.log('RETRIEVED RESULTS: ' + result);
+            res.send(result);
+        })
     })
     
 
@@ -304,6 +325,9 @@ async function getCoursesOfDay(date){
             console.log(err);
         }
     })
+    request.on('error' , (err) => {
+        console.log('ERROR: ' + err);
+    })
     request.on('row' , (columns) => {
         columns.forEach((column) => {
             if(column.value === null) {
@@ -370,11 +394,13 @@ function delCourse(courseName){
 function updateCourse(courseName , updatedCourseName , UpdatedCourseFacultyID , updatedCoursePCI){
     console.log('STARTING TO UPDATE LECTURER');
     let promise = new Promise((resolve , reject) => {
-        let req = new Request('UPDATE [dbo].[Course] SET CourseName = ' + updatedCourseName + ','
-        + ' FacultyID = ' + UpdatedCourseFacultyID + ' ,' + 'ParentCourseID = ' + updatedCoursePCI + 
-        'WHERE CourseName =' + courseName , (err) => {
+        let req = new Request('UPDATE [dbo].[Course] SET CourseName = ' + "'" + updatedCourseName + "'" +','
+        + ' FacultyID = ' + "'" + UpdatedCourseFacultyID + "'" + ' ,' + 'ParentCourseID = ' + "'" + updatedCoursePCI + "'" + 
+        'WHERE CourseName =' + "'" + courseName +"'" , (err) => {
            if(err){
                console.log('ERROR: ' + err);
+           }else{
+            console.log('NO ERROR');
            }
         });
         req.on('done' , (rowCount , more) => {
@@ -389,10 +415,57 @@ function updateCourse(courseName , updatedCourseName , UpdatedCourseFacultyID , 
             reject(err);
         })
    
-        Connection.execSql(req);
+        connection.execSql(req);
     })
     return promise;
 
+}
+
+async function getClasses(){
+    let results = [];
+    let promise = new Promise((resolve , reject) => {
+        console.log('HELLO');
+        let request = new Request(process.env.GET_LESSONS_OF_DAY , (err) => {
+            if(err){
+                console.log('ERROR: ' + err);
+            }
+        })
+        request.on('row' , (columns) => {
+            console.log('HELLO');
+            columns.forEach((column) => {
+                if(column.value === null || column.value === undefined){
+                    console.log('COLUMN VALUE WAS EITHER NULL OR UNDEFINED');
+                }else{
+                    results.push(column.value);
+                }
+            })
+        });
+        request.on('done' , (rowCount , more) => {
+            console.log('DONE!');
+        })
+        request.on('requestCompleted' , () => {
+            console.log('REQUEST COMPLETED');
+            let finalResults = [];
+            if(results !== null){
+                for(let i = 0; i < results.length - 1; i = i + 11){
+                    let courseName = results[i + 3];
+                    let lecturer = results[i + 1];
+                    let startTime = results[i + 9];
+                    let endTime = results[i + 10];
+                    let dayOfWeek = results[i + 8];
+
+                    let Course = new CourseClass(courseName , lecturer , startTime ,endTime , dayOfWeek);
+                    finalResults.push(Course);
+                }
+
+                resolve(finalResults);
+            }else{
+                reject('RESULTS WERE NULL')
+            }
+        })
+        connection.execSql(request);
+    })
+    return promise;
 }
 
 
