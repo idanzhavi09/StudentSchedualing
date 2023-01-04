@@ -424,14 +424,12 @@ function updateCourse(courseName , updatedCourseName , UpdatedCourseFacultyID , 
 async function getClasses(){
     let results = [];
     let promise = new Promise((resolve , reject) => {
-        console.log('HELLO');
         let request = new Request(process.env.GET_LESSONS_OF_DAY , (err) => {
             if(err){
                 console.log('ERROR: ' + err);
             }
         })
         request.on('row' , (columns) => {
-            console.log('HELLO');
             columns.forEach((column) => {
                 if(column.value === null || column.value === undefined){
                     console.log('COLUMN VALUE WAS EITHER NULL OR UNDEFINED');
