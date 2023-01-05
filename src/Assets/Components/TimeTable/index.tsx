@@ -41,84 +41,130 @@ const Schedule: React.FC<{  }> = ({  }) => {
       useEffect(() => {
         axios({
           method:'post',
-          url:'getClasses',
+          url:'/getClasses',
         }).then((res) => {
           let data = res.data;
-          data.map((Course : Course) => {
+          let courseArray : Course[];
+          data.map((val : any) : Course => ({
+            title:val.courseName + '\n' + val.lecturer,
+            startTime:val.startTime,
+            endTime:val.endTime,
+            dayOfWeek:val.dayOfWeek,
+          }))
 
-            switch (Course.dayOfWeek){
-              case 1:
-                events.sunday.push({
-                  id: '1',
-                  name:Course.title,
-                  startTime:new Date(Course.startTime),
-                  endTime:new Date(Course.endTime),
-                })
-                break;
 
-              case 2:
-                events.monday.push({
-                  id:'1',
-                  name:Course.title,
-                  startTime:new Date(Course.startTime),
-                  endTime:new Date(Course.endTime),
-                  type:'custom',
-                })
-                break;
+
+
+
+          // Courses.map((Course : Course) => {
+          //   console.log(Course);
+            
+          //   switch (Course.dayOfWeek){
+          //     case 1:
+          //       events.sunday.push({
+          //         id: '1',
+          //         name:Course.title,
+          //         startTime:new Date(Course.startTime),
+          //         endTime:new Date(Course.endTime),
+          //       })
+          //       console.log('e:' +JSON.stringify(events.sunday));
+                
+          //       break;
+
+          //     case 2:
+          //       events.monday.push({
+          //         id:'1',
+          //         name:Course.title,
+          //         startTime:new Date(Course.startTime),
+          //         endTime:new Date(Course.endTime),
+          //         type:'custom',
+          //       })
+          //       break;
               
-                case 3:
-                  events.tuesday.push({
-                    id:'1',
-                    name:Course.title,
-                    startTime:new Date(Course.startTime),
-                    endTime:new Date(Course.endTime),
-                    type:'custom',
-                  })
-                  break;
+          //       case 3:
+          //         events.tuesday.push({
+          //           id:'1',
+          //           name:Course.title,
+          //           startTime:new Date(Course.startTime),
+          //           endTime:new Date(Course.endTime),
+          //           type:'custom',
+          //         })
+          //         break;
 
-                  case 4:
-                    events.wednesday.push({
-                      id:'1',
-                      name:Course.title,
-                      startTime:new Date(Course.startTime),
-                      endTime:new Date(Course.endTime),
-                      type:'custom',
-                    })
-                    break;
+          //         case 4:
+          //           events.wednesday.push({
+          //             id:'1',
+          //             name:Course.title,
+          //             startTime:new Date(Course.startTime),
+          //             endTime:new Date(Course.endTime),
+          //             type:'custom',
+          //           })
+          //           break;
 
-                  case 5:
-                    events.thursday.push({
-                      id:'1',
-                      name:Course.title,
-                      startTime:new Date(Course.startTime),
-                      endTime:new Date(Course.endTime),
-                      type:'custom',
-                      })
-                    break;
+          //         case 5:
+          //           events.thursday.push({
+          //             id:'1',
+          //             name:Course.title,
+          //             startTime:new Date(Course.startTime),
+          //             endTime:new Date(Course.endTime),
+          //             type:'custom',
+          //             })
+          //           break;
 
-                  case 6:
-                    events.friday.push({
-                      id:'1',
-                      name:Course.title,
-                      startTime:new Date(Course.startTime),
-                      endTime:new Date(Course.endTime),
-                      type:'custom',
-                    })
-                      break;
+          //         case 6:
+          //           events.friday.push({
+          //             id:'1',
+          //             name:Course.title,
+          //             startTime:new Date(Course.startTime),
+          //             endTime:new Date(Course.endTime),
+          //             type:'custom',
+          //           })
+          //             break;
 
-            }
+          //   }
 
-          })
+          // })
           
         }).catch((err) => {
           console.log(err);
         })
       } ,[])
-    
+
+      events.sunday.push({
+        name:'אלגוריתמים 1',
+        startTime:new Date('2018-02-23T11:30:00'),
+        endTime:new Date('2018-02-23T13:30:00'),
+        id:'1',
+        type:'custom'
+      },
+      {
+        name:'Data structures',
+        startTime:new Date('2018-02-23T16:00:00'),
+        endTime:new Date('2018-02-23T22:00:00'),
+        id:'1',
+        type:'custom',
+      })
+      events.monday.push({
+        name:'אבטחת מידע',
+        startTime:new Date('2018-02-23T11:00:00'),
+        endTime:new Date('2018-02-23T16:30:00'),
+        id:'1',
+        type:'custom',
+      },
+      {
+      name:'בדידה',
+      startTime:new Date('2018-02-23T17:00:00'),
+      endTime:new Date('2018-02-23T22:30:00'),
+      id:'1',
+      type:'custom',
+    },
+      )
+
+      
     
     return (
         <>
-          <TimeTable events={events} style={{height:'500px'}} />
+          <TimeTable events={events} style={{height:'500px' , width:'100%'}} />
         </>
     );
   };

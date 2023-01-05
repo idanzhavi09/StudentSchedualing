@@ -161,12 +161,28 @@ connection.on("connect", err => {
         console.log('RECIEVED REQUEST TO RETRIEVE CLASSES');
         async function getClassesResult(){
             let results = await getClasses();
-            console.log('RESULTS:' + results);
             return results;
         };
         getClassesResult().then((result) => {
-            console.log('RETRIEVED RESULTS: ' + result);
             res.send(result);
+        })
+    })
+
+    app.post('/getDegrees' , (req, res) => {
+        console.log('RECIEVED REQUEST TO GET DEGREES');
+        async function getDegreesResult(){
+            let results = await getDegrees();
+            return results;
+        }
+        
+        getDegreesResult().then((result) => {
+            if(result === null || result === undefined){
+                res.sendStatus(400).send('results were either null or undefined')
+            }else{
+                res.sendStatus(200).send(result);
+            }
+        }).catch((err) => {
+            console.log('FINAL DEGREE ERROR' + err);
         })
     })
     
@@ -461,6 +477,40 @@ async function getClasses(){
                 reject('RESULTS WERE NULL')
             }
         })
+        connection.execSql(request);
+    })
+    return promise;
+}
+
+async function getDegrees(){
+    let results = [];
+    let promise = new Promise((resolve,reject) => {
+        let request = new Request('SELECT * [DegreeName] FROM [dbo].[Degree]' , (err) => {
+            if(err){
+                console.log('DegreeERRORs:' + err);
+            }
+        });
+        request.on('row' , (columns) => {
+            columns.forEach((column) => {
+                if(column.value === null || column.value === undefined){
+                    console.log('Column value was either null or undefined');
+                }else{
+                    results.push(column.value);
+                }
+            })
+        })
+        request.on('done' , (rowCount , more) => {
+            console.log('DONE!');
+        })
+        request.on('requestCompleted' , () => {
+            console.log('REQUEST COMPLETED!');
+            if(results.length > 0){
+                resolve(results);
+            }else{
+                reject('the results were null')
+            }
+        })
+
         connection.execSql(request);
     })
     return promise;

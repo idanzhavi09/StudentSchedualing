@@ -9,15 +9,10 @@ import Modal from "react-modal";
 import moment from 'moment';
 import Scheduler from '../Schedualer';
 import Schedule from '../TimeTable';
+import { Axios } from 'axios';
 const uuid = require('uuid');
 const axios = require('axios').default;
 Modal.setAppElement("#root");
-
-
-
-const handleSubmitCourse = (e) => {
-  console.log('New Submission');
-}
 
 
 
@@ -34,22 +29,56 @@ class CourseClass{
 
 
 const Assignment = () => {
+
+        useEffect(() => {
+          axios({
+            method:'post',
+            url:'/getDegrees',
+          }).then((res) => {
+            setDegrees(res.data);
+          }).catch((err) => {
+            console.log('ERROR:' + err);
+          })
+        } , [])
+
         const [isAddOpen, setIsAddOpen] = useState(false);
-
-        
-
+        const [degrees , setDegrees] = useState([]);
+        let years = ['2020' , '2021' , '2022' , '2023'];
         function toggleAddModal(){
           setIsAddOpen(!isAddOpen);
         }
+
+        function handleChangeYear(){
+
+        }
+
+        function handleChangeDegree(){
+
+        }
+
         return(
             <>
             <main>
                 <img id='onoLogo' src={onoacademic} alt="ono" />
                 <BackButton />
+                <select className='yearSelector' onChange={handleChangeYear}>
+                  {years.map((year) => {return (<option value={year}>{year}</option>)})}
+                </select>
+
+                <select className='DegreeSelector' onChange={handleChangeDegree}>
+                  {degrees.map((degree) => {return(<option value={degree}>{degree}</option>)})}
+                </select>
+
+                <button oncClick={toggleAddModal} className='btnAddClass'>הוסף</button>
+
+
                 <section className='glass'>
                     <h1 className='title'>מסך שיבוצים</h1>
-
                     <Schedule />
+
+                    <Modal isOpen={isAddOpen} onRequestClose={toggleAddModal} contentLabel="Add Dialog" className="mymodal"overlayClassName="myoverlay" >
+                        <input />
+                    </Modal>
                 </section>
             </main>
             <div className='circle1'></div>
